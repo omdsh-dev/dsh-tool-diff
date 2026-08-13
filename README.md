@@ -1,5 +1,7 @@
 # dsh-tool-diff
 
+[English](README.en.md)
+
 DSH Diff 文本差异工具插件 —— 文本 / JSON / CSV / Markdown 结构化比较与 unified diff 生成。零依赖、纯函数、只读。
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
