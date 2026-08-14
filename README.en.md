@@ -84,30 +84,40 @@ node <monorepo>/node_modules/typescript/bin/tsc -p tsconfig.json
 node <monorepo>/node_modules/vitest/vitest.mjs run tests
 ```
 
-## npm rc.1 Compatibility (Verified)
+## npm 0.1.0-rc.6 Compatibility (Verified)
 
-This plugin has been migrated to the npm rc.1 dependency line and fully verified end-to-end in an isolated consumer of `@deepseek-ai/dsh@0.0.1-rc.1`:
+This plugin has been migrated to the npm 0.1.0-rc.6 dependency line and fully verified end-to-end in an isolated consumer of `@deepseek-ai/dsh@0.1.0-rc.6`:
 
-- **Types/runtime**: `@deepseek-ai/cordis@^4.0.1-rc.1` + `@deepseek-ai/dsh-tools@^0.0.1-rc.1` + `@deepseek-ai/dsh-invariants@^0.0.1-rc.1` (peer); no longer depends on unscoped `cordis`
+- **Types/runtime**: `@deepseek-ai/cordis: ^4.0.1` + `@deepseek-ai/dsh-tools: >=0.0.1-rc.1 <0.2.0` + `@deepseek-ai/dsh-invariants: >=0.0.1-rc.1 <0.2.0` (peer); no longer depends on unscoped `cordis`
 - **Standalone build**: `npm install` (devDependencies self-contained: typescript/vitest/@types/node) → `npm run typecheck` → `npm test` → `npm run build` → `npm pack`
-- **Consumption verification**: tarball loaded into an rc.1 consumer → `dsh --profile compat --dump-config` shows this plugin's row → the tool genuinely registers and executes
-- **Launch method**: `npx -p @deepseek-ai/dsh@0.0.1-rc.1 dsh web` (lib production mode; don't `install -g` globally)
+- **Consumption verification**: tarball loaded into a 0.1.0-rc.6 consumer → `dsh --profile compat --dump-config` shows this plugin's row → the tool genuinely registers and executes
+- **Launch method**: `npx -p @deepseek-ai/dsh@0.1.0-rc.6 dsh web` (lib production mode; don't `install -g` globally)
 
 
 ## Installation
 
 ### Profile Bundle (Recommended)
 
-Install this plugin into a profile as a standalone bundle (0806+):
+As of DSH 0.1.0-rc.6 (npm), this plugin can be installed into any profile as a standalone bundle in one step (repositories live at https://github.com/omdsh-dev, public):
 
 ```sh
 # 交互式（web）profile
-dsh plugin --profile web add "C:/path/to/dsh-tool-diff"
+dsh plugin --profile web add github:omdsh-dev/dsh-tool-diff
 # 一次性任务（headless）profile —— dsh run 默认使用 headless
-dsh plugin --profile headless add "C:/path/to/dsh-tool-diff"
+dsh plugin --profile headless add github:omdsh-dev/dsh-tool-diff
 ```
 
-The in-package `dsh.bundle.patch` automatically adds the plugin to the profile's layer stack after installation (row id: `tool-diff`). The plugin's missing peer dependencies (`cordis`, `@deepseek-ai/dsh-tools`) are provided by the profile's healed `profiles/node_modules` fallback installation.
+You can also pack a tarball with `npm pack` first and install that:
+
+```sh
+git clone https://github.com/omdsh-dev/dsh-tool-diff
+cd dsh-tool-diff
+npm install && npm pack
+dsh plugin --profile web add ./deepseek-ai-dsh-tool-diff-*.tgz
+dsh plugin --profile headless add ./deepseek-ai-dsh-tool-diff-*.tgz
+```
+
+The in-package `dsh.bundle.patch` automatically adds the plugin to the profile's layer stack after installation (row id: `tool-diff`). The plugin's missing peer dependencies (`@deepseek-ai/cordis`, `@deepseek-ai/dsh-tools`, `@deepseek-ai/dsh-invariants`) are provided by the profile's healed `profiles/node_modules` fallback installation.
 
 > ⚠️ web and headless are **different profiles**: installing for web doesn't automatically cover headless; `dsh run` uses the headless profile by default. Use forward slashes for Windows paths (`C:/...`).
 
@@ -123,9 +133,9 @@ dsh --profile web --dump-config | grep tool-diff
 dsh run "使用 diff 工具对比两段文本"
 ```
 
-### Manual Installation and Legacy Compatibility
+### Manual Installation (Source Contribution / Legacy Snapshot Scenarios)
 
-Only for old snapshots that don't support Profile Bundle, or plugin development/debugging environments (local junction/symlink, manual profile-layer editing).
+Only for source contribution (developing/debugging this plugin in the monorepo) or scenarios still using old snapshots (local junction/symlink, manual profile-layer editing).
 
 ## License
 
